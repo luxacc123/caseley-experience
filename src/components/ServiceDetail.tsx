@@ -12,7 +12,7 @@ export default function ServiceDetail({ service, index }: ServiceDetailProps) {
   return (
     <div
       id={service.id}
-      className={`py-12 ${index % 2 === 0 ? "" : "bg-surface"}`}
+      className={`scroll-mt-28 py-12 lg:scroll-mt-32 ${index % 2 === 0 ? "" : "bg-surface"}`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl">

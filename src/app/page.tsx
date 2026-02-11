@@ -17,6 +17,7 @@ export default function Home() {
             "@context": "https://schema.org",
             "@type": "LocalBusiness",
             name: "Caseley Experience",
+            url: "https://caseleyexperience.nl",
             description: "Wegtransport door heel Europa",
             founder: "Marc Caseley",
             foundingDate: "2018-08",

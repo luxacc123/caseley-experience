@@ -5,7 +5,7 @@ import { contact } from "@/content/contact";
 
 export default function StickyCTA() {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-white p-2 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-white pb-[env(safe-area-inset-bottom,0px)] p-2 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] md:hidden">
       <div className="flex gap-2">
         <a
           href={`tel:${contact.phone}`}

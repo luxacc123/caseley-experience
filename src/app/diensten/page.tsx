@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import HeroSection from "@/components/HeroSection";
 import ServiceDetail from "@/components/ServiceDetail";
-import CTASection from "@/components/CTASection";
 import { services } from "@/content/services";
 import { contact } from "@/content/contact";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Diensten",

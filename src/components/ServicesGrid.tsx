@@ -29,7 +29,7 @@ const iconMap: Record<string, React.ReactNode> = {
   ),
   thermometer: (
     <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01M5.07 19H19a2 2 0 001.75-2.96l-6.93-12.08a2 2 0 00-3.5 0L3.32 16.04A2 2 0 005.07 19z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 4a2 2 0 10-4 0v9.528a4 4 0 104 0V4z" />
     </svg>
   ),
   maximize: (
