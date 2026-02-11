@@ -54,21 +54,25 @@ export default function Home() {
         steps={[
           {
             number: 1,
-            title: "U deelt uw transportbehoefte",
-            description: "Telefonisch, per mail, of via het formulier.",
+            title: "Deel uw transportbehoefte",
+            description: "Bel, mail, of vul het formulier in.",
           },
           {
             number: 2,
-            title: "Wij schakelen ons netwerk in",
-            description: "Direct contact met vervoerders.",
+            title: "Wij zoeken de beste vervoerder",
+            description: "Direct schakelen met ons netwerk.",
           },
           {
             number: 3,
-            title: "Binnen 30 minuten een offerte",
+            title: "Offerte binnen 30 minuten",
             description: "Scherp, betrouwbaar, passend.",
           },
+          {
+            number: 4,
+            title: "Uw zending wordt opgepakt",
+            description: "Veilig en op de afgesproken datum.",
+          },
         ]}
-        variant="compact"
       />
 
       {/* Over Marc - kort */}

@@ -46,7 +46,6 @@ export default function WerkwijzePage() {
             description: "Veilig, betrouwbaar, en op de afgesproken datum.",
           },
         ]}
-        variant="full"
       />
 
       <ChecklistBlock />

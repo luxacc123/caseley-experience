@@ -5,30 +5,27 @@ interface Step {
 }
 
 interface ProcessStepsProps {
-  steps: Step[];
-  variant?: "compact" | "full";
+  steps?: Step[];
 }
 
-const defaultStepsShort: Step[] = [
+const defaultSteps: Step[] = [
   {
     number: 1,
-    title: "U deelt uw transportbehoefte",
-    description: "Telefonisch, per mail, of via het formulier.",
+    title: "Deel uw transportbehoefte",
+    description: "Bel, mail, of vul het formulier in met de gegevens van uw zending.",
   },
   {
     number: 2,
-    title: "Wij schakelen ons netwerk in",
-    description: "Direct contact met vervoerders.",
+    title: "Wij zoeken de beste vervoerder",
+    description:
+      "Via ons netwerk schakelen we direct met vervoerders die bij uw zending passen.",
   },
   {
     number: 3,
-    title: "Binnen 30 minuten een offerte",
-    description: "Scherp, betrouwbaar, passend.",
+    title: "Offerte binnen 30 minuten",
+    description:
+      "U ontvangt een scherpe offerte. Akkoord? Dan regelen wij de rest.",
   },
-];
-
-const defaultStepsFull: Step[] = [
-  ...defaultStepsShort,
   {
     number: 4,
     title: "Uw zending wordt opgepakt",
@@ -38,24 +35,18 @@ const defaultStepsFull: Step[] = [
 
 export default function ProcessSteps({
   steps,
-  variant = "compact",
 }: ProcessStepsProps) {
-  const displaySteps =
-    steps || (variant === "full" ? defaultStepsFull : defaultStepsShort);
+  const displaySteps = steps || defaultSteps;
 
   return (
     <section className="bg-surface py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-primary lg:text-4xl">
-            {variant === "full"
-              ? "Van aanvraag tot levering"
-              : "In drie stappen geregeld"}
+            Van aanvraag tot levering
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-text-muted">
-            {variant === "full"
-              ? "Wij schakelen direct met ons netwerk van vervoerders. Geef ons de details, en u ontvangt binnen 30 minuten een offerte."
-              : "Zo werkt het bij Caseley Experience."}
+            Zo werkt het bij Caseley Experience.
           </p>
         </div>
 
@@ -77,5 +68,5 @@ export default function ProcessSteps({
   );
 }
 
-export { defaultStepsShort, defaultStepsFull };
+export { defaultSteps };
 export type { Step };
