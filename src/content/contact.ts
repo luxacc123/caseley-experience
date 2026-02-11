@@ -1,0 +1,21 @@
+export const contact = {
+  phone: "+31614385060",
+  phoneFormatted: "+31 6 1438 5060",
+  phoneDisplay: "+31 6 1438 5060",
+  email: "info@caseleyexperience.nl",
+  address: {
+    street: "Oosthoutlaan 4",
+    postal: "2171 TZ",
+    city: "Sassenheim",
+    full: "Oosthoutlaan 4, 2171 TZ Sassenheim",
+  },
+  owner: "Marc Caseley",
+  founded: "Augustus 2018",
+  experience: "20+ jaar",
+  availability: "24/7 bereikbaar",
+  responseTime: "Binnen 30 minuten",
+  kvk: "72213388",
+  btw: "NL002060699B85",
+  iban: "NL12RABO0331574551",
+  bic: "RABONL2U",
+} as const;
