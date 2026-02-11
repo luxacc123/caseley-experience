@@ -19,8 +19,8 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between lg:h-20">
-          {/* Logo */}
-          <BrandLogo variant="wide" theme="light" />
+          {/* Logo — mark on mobile, wide on desktop */}
+          <BrandLogo variant="responsive" theme="light" />
 
           {/* Desktop nav */}
           <nav className="hidden items-center gap-8 lg:flex">

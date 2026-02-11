@@ -2,43 +2,65 @@ import Link from "next/link";
 import Image from "next/image";
 
 interface BrandLogoProps {
-  /** "wide" shows full logo with subtitle, "compact" shows just the CE mark */
-  variant?: "wide" | "compact";
-  /** Render context — controls inversion for dark backgrounds */
-  theme?: "light" | "dark" | "auto";
-  /** Override height class (Tailwind). Defaults per variant. */
+  /** "wide" = full logo + subtitle, "mark" = CE icon only, "responsive" = mark on mobile, wide on desktop */
+  variant?: "wide" | "mark" | "responsive";
+  /** "light" = dark logo on light bg, "dark" = white logo on dark bg */
+  theme?: "light" | "dark";
+  /** Override height class (Tailwind) */
   className?: string;
 }
 
 /**
- * Reusable brand logo component.
+ * Reusable brand logo.
  * - Links to homepage
- * - Accessible: aria-label on link, decorative alt on image
- * - Responsive: compact on mobile, wide on desktop (when variant="auto")
- * - Dark-mode: uses CSS invert filter on dark backgrounds
+ * - aria-label on link, alt on image
+ * - No background, no padding, no borders — transparent PNG only
  */
 export default function BrandLogo({
-  variant = "wide",
-  theme = "auto",
+  variant = "responsive",
+  theme = "light",
   className,
 }: BrandLogoProps) {
-  const src = "/logo-caseley-experience.png";
+  const isDark = theme === "dark";
 
-  // Determine filter classes for dark backgrounds
-  const invertClass =
-    theme === "dark"
-      ? "brightness-0 invert"
-      : theme === "auto"
-        ? "dark:brightness-0 dark:invert"
-        : "";
+  const wideSrc = isDark ? "/brand/logo-wide-dark.png" : "/brand/logo-wide.png";
+  const markSrc = isDark ? "/brand/logo-mark-dark.png" : "/brand/logo-mark.png";
 
-  // Default sizing per variant
-  const defaultSizing =
-    variant === "compact"
-      ? "h-7 w-auto"
-      : "h-8 w-auto lg:h-10";
+  if (variant === "responsive") {
+    return (
+      <Link
+        href="/"
+        aria-label="Naar de homepage"
+        className="inline-flex shrink-0 items-center"
+      >
+        {/* Mobile: mark only */}
+        <Image
+          src={markSrc}
+          alt="Caseley Experience logo"
+          width={522}
+          height={257}
+          priority
+          className={`block lg:hidden ${className || "h-9 w-auto"}`}
+        />
+        {/* Desktop: wide logo */}
+        <Image
+          src={wideSrc}
+          alt="Caseley Experience logo"
+          width={1152}
+          height={864}
+          priority
+          className={`hidden lg:block ${className || "h-11 w-auto"}`}
+        />
+      </Link>
+    );
+  }
 
-  const sizeClass = className || defaultSizing;
+  const src = variant === "mark" ? markSrc : wideSrc;
+  const w = variant === "mark" ? 522 : 1152;
+  const h = variant === "mark" ? 257 : 864;
+
+  const defaultSize =
+    variant === "mark" ? "h-9 w-auto" : "h-11 w-auto";
 
   return (
     <Link
@@ -49,10 +71,10 @@ export default function BrandLogo({
       <Image
         src={src}
         alt="Caseley Experience logo"
-        width={1152}
-        height={864}
-        priority={variant === "wide"}
-        className={`${sizeClass} ${invertClass}`.trim()}
+        width={w}
+        height={h}
+        priority
+        className={`block ${className || defaultSize}`}
       />
     </Link>
   );

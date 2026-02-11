@@ -10,7 +10,8 @@ import { mkdir } from "fs/promises";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
-const LOGO = join(ROOT, "public", "logo-caseley-experience.png");
+const LOGO = join(ROOT, "public", "brand", "logo-wide.png");
+const MARK = join(ROOT, "public", "brand", "logo-mark.png");
 const PUBLIC = join(ROOT, "public");
 const APP = join(ROOT, "src", "app");
 
@@ -22,10 +23,10 @@ async function ensureDir(dir) {
  * Create a square icon by placing the logo centered on a white square canvas.
  */
 async function generateSquareIcon(size, outputPath) {
-  // Resize the logo to fit inside the square with padding
-  const logoPadded = Math.round(size * 0.75); // logo takes ~75% of icon
+  // Use the mark (CE icon) for favicons — better at small sizes
+  const logoPadded = Math.round(size * 0.75);
 
-  const resizedLogo = await sharp(LOGO)
+  const resizedLogo = await sharp(MARK)
     .resize(logoPadded, logoPadded, { fit: "inside", background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .toBuffer();
 
@@ -93,7 +94,7 @@ async function main() {
   await ensureDir(PUBLIC);
   await ensureDir(APP);
 
-  console.log("Generating icons from:", LOGO);
+  console.log("Generating icons from:", MARK, "(favicons) +", LOGO, "(social)");
   console.log("");
 
   // Favicons (square, white bg)
