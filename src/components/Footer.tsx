@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { contact } from "@/content/contact";
 
 const navItems = [
@@ -16,8 +17,13 @@ export default function Footer() {
           {/* Column 1: Brand */}
           <div>
             <Link href="/" className="inline-block">
-              <span className="text-xl font-bold">Caseley </span>
-              <span className="text-xl font-light">Experience</span>
+              <Image
+                src="/logo-caseley-experience.png"
+                alt="Caseley Experience Trucking Solutions logo"
+                width={120}
+                height={90}
+                className="h-7 w-auto brightness-0 invert"
+              />
             </Link>
             <p className="mt-3 text-sm text-white/70">
               Wegtransport door heel Europa

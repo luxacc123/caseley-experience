@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { contact } from "@/content/contact";
 
@@ -19,13 +20,15 @@ export default function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold tracking-tight text-primary lg:text-2xl">
-              Caseley
-            </span>
-            <span className="text-xl font-light tracking-tight text-primary lg:text-2xl">
-              Experience
-            </span>
+          <Link href="/" className="flex shrink-0 items-center">
+            <Image
+              src="/logo-caseley-experience.png"
+              alt="Caseley Experience Trucking Solutions logo"
+              width={160}
+              height={120}
+              priority
+              className="h-8 w-auto lg:h-10"
+            />
           </Link>
 
           {/* Desktop nav */}

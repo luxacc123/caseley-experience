@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   description:
     "Transport over de weg, snel en betrouwbaar. 24/7 bereikbaar, offerte binnen 30 minuten. 20+ jaar ervaring.",
   metadataBase: new URL("https://caseleyexperience.nl"),
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
   openGraph: {
     type: "website",
     locale: "nl_NL",
