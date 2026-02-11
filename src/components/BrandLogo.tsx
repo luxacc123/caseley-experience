@@ -15,6 +15,7 @@ interface BrandLogoProps {
  * - Links to homepage
  * - aria-label on link, alt on image
  * - No background, no padding, no borders — transparent PNG only
+ * - `unoptimized` preserves alpha channel (avoids white-bg artefacts)
  */
 export default function BrandLogo({
   variant = "responsive",
@@ -37,30 +38,32 @@ export default function BrandLogo({
         <Image
           src={markSrc}
           alt="Caseley Experience logo"
-          width={522}
+          width={481}
           height={257}
           priority
+          unoptimized
           className={`block lg:hidden ${className || "h-9 w-auto"}`}
         />
         {/* Desktop: wide logo */}
         <Image
           src={wideSrc}
           alt="Caseley Experience logo"
-          width={1152}
-          height={864}
+          width={522}
+          height={357}
           priority
-          className={`hidden lg:block ${className || "h-11 w-auto"}`}
+          unoptimized
+          className={`hidden lg:block ${className || "h-12 w-auto"}`}
         />
       </Link>
     );
   }
 
   const src = variant === "mark" ? markSrc : wideSrc;
-  const w = variant === "mark" ? 522 : 1152;
-  const h = variant === "mark" ? 257 : 864;
+  const w = variant === "mark" ? 481 : 522;
+  const h = variant === "mark" ? 257 : 357;
 
   const defaultSize =
-    variant === "mark" ? "h-9 w-auto" : "h-11 w-auto";
+    variant === "mark" ? "h-9 w-auto" : "h-12 w-auto";
 
   return (
     <Link
@@ -74,6 +77,7 @@ export default function BrandLogo({
         width={w}
         height={h}
         priority
+        unoptimized
         className={`block ${className || defaultSize}`}
       />
     </Link>

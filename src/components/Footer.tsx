@@ -16,7 +16,7 @@ export default function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Column 1: Brand */}
           <div>
-            <BrandLogo variant="wide" theme="dark" className="h-12 w-auto" />
+            <BrandLogo variant="wide" theme="dark" className="h-14 w-auto" />
             <p className="mt-3 text-sm text-white/70">
               Wegtransport door heel Europa
             </p>
