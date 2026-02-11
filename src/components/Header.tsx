@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useState } from "react";
 import { contact } from "@/content/contact";
+import BrandLogo from "@/components/BrandLogo";
 
 const navItems = [
   { label: "Diensten", href: "/diensten" },
@@ -20,16 +20,7 @@ export default function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex shrink-0 items-center">
-            <Image
-              src="/logo-caseley-experience.png"
-              alt="Caseley Experience Trucking Solutions logo"
-              width={160}
-              height={120}
-              priority
-              className="h-8 w-auto lg:h-10"
-            />
-          </Link>
+          <BrandLogo variant="wide" theme="light" />
 
           {/* Desktop nav */}
           <nav className="hidden items-center gap-8 lg:flex">

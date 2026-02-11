@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
 import { contact } from "@/content/contact";
+import BrandLogo from "@/components/BrandLogo";
 
 const navItems = [
   { label: "Diensten", href: "/diensten" },
@@ -16,15 +16,7 @@ export default function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Column 1: Brand */}
           <div>
-            <Link href="/" className="inline-block">
-              <Image
-                src="/logo-caseley-experience.png"
-                alt="Caseley Experience Trucking Solutions logo"
-                width={120}
-                height={90}
-                className="h-7 w-auto brightness-0 invert"
-              />
-            </Link>
+            <BrandLogo variant="compact" theme="dark" />
             <p className="mt-3 text-sm text-white/70">
               Wegtransport door heel Europa
             </p>
