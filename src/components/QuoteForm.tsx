@@ -99,8 +99,9 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
             Wat hebben wij nodig voor uw offerte?
           </p>
           <p className="mt-1 text-xs text-text-muted">
-            Laad- en losdag, volledige adressen, goederenbeschrijving met
-            afmetingen/gewicht, en beschikbare faciliteiten.
+            Laad- en losdag met tijdstip, volledige adressen,
+            goederenbeschrijving met afmetingen/gewicht, en beschikbare
+            faciliteiten.
           </p>
         </div>
       )}
@@ -193,6 +194,24 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
                 />
               </div>
               <div>
+                <label htmlFor="laadtijd" className={labelClasses}>
+                  Gewenste laadtijd{" "}
+                  <span className="text-red-500" aria-hidden="true">
+                    *
+                  </span>
+                </label>
+                <input
+                  type="time"
+                  id="laadtijd"
+                  name="laadtijd"
+                  required
+                  aria-required="true"
+                  className={inputClasses}
+                />
+              </div>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div>
                 <label htmlFor="losdag" className={labelClasses}>
                   Gewenste losdag{" "}
                   <span className="text-red-500" aria-hidden="true">
@@ -203,6 +222,22 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
                   type="date"
                   id="losdag"
                   name="losdag"
+                  required
+                  aria-required="true"
+                  className={inputClasses}
+                />
+              </div>
+              <div>
+                <label htmlFor="lostijd" className={labelClasses}>
+                  Gewenste lostijd{" "}
+                  <span className="text-red-500" aria-hidden="true">
+                    *
+                  </span>
+                </label>
+                <input
+                  type="time"
+                  id="lostijd"
+                  name="lostijd"
                   required
                   aria-required="true"
                   className={inputClasses}
