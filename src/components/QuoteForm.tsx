@@ -11,9 +11,33 @@ interface QuoteFormProps {
 export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [vensterErrors, setVensterErrors] = useState<{
+    laad?: string;
+    los?: string;
+  }>({});
+
+  function validateVensters(form: HTMLFormElement): boolean {
+    const laadVanaf = form.elements.namedItem("laadvensterVanaf") as HTMLInputElement | null;
+    const laadTot = form.elements.namedItem("laadvensterTot") as HTMLInputElement | null;
+    const losVanaf = form.elements.namedItem("losvensterVanaf") as HTMLInputElement | null;
+    const losTot = form.elements.namedItem("losvensterTot") as HTMLInputElement | null;
+
+    const errors: { laad?: string; los?: string } = {};
+
+    if (laadVanaf?.value && laadTot?.value && laadTot.value <= laadVanaf.value) {
+      errors.laad = "\"Tot\" moet later zijn dan \"vanaf\".";
+    }
+    if (losVanaf?.value && losTot?.value && losTot.value <= losVanaf.value) {
+      errors.los = "\"Tot\" moet later zijn dan \"vanaf\".";
+    }
+
+    setVensterErrors(errors);
+    return !errors.laad && !errors.los;
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!validateVensters(e.currentTarget)) return;
     setSubmitting(true);
     // In productie: POST naar API-route of e-mail service
     await new Promise((r) => setTimeout(r, 600));
@@ -99,7 +123,7 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
             Wat hebben wij nodig voor uw offerte?
           </p>
           <p className="mt-1 text-xs text-text-muted">
-            Laad- en losdag met tijdstip, volledige adressen,
+            Laad- en losdag met tijdvenster, volledige adressen,
             goederenbeschrijving met afmetingen/gewicht, en beschikbare
             faciliteiten.
           </p>
@@ -176,73 +200,126 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
             <legend className="text-sm font-semibold uppercase tracking-wider text-text-muted">
               Transportgegevens
             </legend>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <label htmlFor="laaddag" className={labelClasses}>
-                  Gewenste laaddag{" "}
-                  <span className="text-red-500" aria-hidden="true">
-                    *
-                  </span>
-                </label>
-                <input
-                  type="date"
-                  id="laaddag"
-                  name="laaddag"
-                  required
-                  aria-required="true"
-                  className={inputClasses}
-                />
-              </div>
-              <div>
-                <label htmlFor="laadtijd" className={labelClasses}>
-                  Gewenste laadtijd{" "}
-                  <span className="text-red-500" aria-hidden="true">
-                    *
-                  </span>
-                </label>
-                <input
-                  type="time"
-                  id="laadtijd"
-                  name="laadtijd"
-                  required
-                  aria-required="true"
-                  className={inputClasses}
-                />
-              </div>
+            {/* Laaddag + Laadvenster */}
+            <div>
+              <label htmlFor="laaddag" className={labelClasses}>
+                Gewenste laaddag{" "}
+                <span className="text-red-500" aria-hidden="true">
+                  *
+                </span>
+              </label>
+              <input
+                type="date"
+                id="laaddag"
+                name="laaddag"
+                required
+                aria-required="true"
+                className={inputClasses}
+              />
             </div>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <label htmlFor="losdag" className={labelClasses}>
-                  Gewenste losdag{" "}
-                  <span className="text-red-500" aria-hidden="true">
-                    *
-                  </span>
-                </label>
-                <input
-                  type="date"
-                  id="losdag"
-                  name="losdag"
-                  required
-                  aria-required="true"
-                  className={inputClasses}
-                />
+            <div>
+              <p className={`${labelClasses} mb-2`}>
+                Laadvenster{" "}
+                <span className="text-red-500" aria-hidden="true">
+                  *
+                </span>
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="laadvensterVanaf" className="mb-1 block text-xs text-text-muted">
+                    Vanaf
+                  </label>
+                  <input
+                    type="time"
+                    id="laadvensterVanaf"
+                    name="laadvensterVanaf"
+                    required
+                    aria-required="true"
+                    placeholder="08:00"
+                    className={inputClasses}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="laadvensterTot" className="mb-1 block text-xs text-text-muted">
+                    Tot
+                  </label>
+                  <input
+                    type="time"
+                    id="laadvensterTot"
+                    name="laadvensterTot"
+                    required
+                    aria-required="true"
+                    placeholder="17:00"
+                    className={inputClasses}
+                  />
+                </div>
               </div>
-              <div>
-                <label htmlFor="lostijd" className={labelClasses}>
-                  Gewenste lostijd{" "}
-                  <span className="text-red-500" aria-hidden="true">
-                    *
-                  </span>
-                </label>
-                <input
-                  type="time"
-                  id="lostijd"
-                  name="lostijd"
-                  required
-                  aria-required="true"
-                  className={inputClasses}
-                />
+              {vensterErrors.laad && (
+                <p className="mt-1.5 text-xs text-red-600" role="alert">
+                  {vensterErrors.laad}
+                </p>
+              )}
+            </div>
+
+            {/* Losdag + Losvenster */}
+            <div>
+              <label htmlFor="losdag" className={labelClasses}>
+                Gewenste losdag{" "}
+                <span className="text-red-500" aria-hidden="true">
+                  *
+                </span>
+              </label>
+              <input
+                type="date"
+                id="losdag"
+                name="losdag"
+                required
+                aria-required="true"
+                className={inputClasses}
+              />
+            </div>
+            <div>
+              <p className={`${labelClasses} mb-2`}>
+                Losvenster{" "}
+                <span className="text-red-500" aria-hidden="true">
+                  *
+                </span>
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="losvensterVanaf" className="mb-1 block text-xs text-text-muted">
+                    Vanaf
+                  </label>
+                  <input
+                    type="time"
+                    id="losvensterVanaf"
+                    name="losvensterVanaf"
+                    required
+                    aria-required="true"
+                    placeholder="08:00"
+                    className={inputClasses}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="losvensterTot" className="mb-1 block text-xs text-text-muted">
+                    Tot
+                  </label>
+                  <input
+                    type="time"
+                    id="losvensterTot"
+                    name="losvensterTot"
+                    required
+                    aria-required="true"
+                    placeholder="17:00"
+                    className={inputClasses}
+                  />
+                </div>
               </div>
+              {vensterErrors.los && (
+                <p className="mt-1.5 text-xs text-red-600" role="alert">
+                  {vensterErrors.los}
+                </p>
+              )}
             </div>
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
