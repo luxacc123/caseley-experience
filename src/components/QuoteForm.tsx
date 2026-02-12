@@ -11,6 +11,7 @@ interface QuoteFormProps {
 export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [vensterErrors, setVensterErrors] = useState<{
     laad?: string;
     los?: string;
@@ -35,14 +36,61 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
     return !errors.laad && !errors.los;
   }
 
+  function buildTimeWindow(from: string, to: string): string | null {
+    if (!from && !to) return null;
+    return `${from}–${to}`;
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!validateVensters(e.currentTarget)) return;
+    setSubmitError(null);
+    const form = e.currentTarget;
+    if (!validateVensters(form)) return;
+
     setSubmitting(true);
-    // In productie: POST naar API-route of e-mail service
-    await new Promise((r) => setTimeout(r, 600));
-    setSubmitting(false);
-    setSubmitted(true);
+
+    const fd = new FormData(form);
+    const val = (name: string) => (fd.get(name) as string) ?? "";
+
+    const payload = {
+      name: val("naam"),
+      email: val("email"),
+      phone: val("telefoon"),
+      company: val("company"), // honeypot
+      pickup_date: val("laaddag"),
+      pickup_time_window: buildTimeWindow(val("laadvensterVanaf"), val("laadvensterTot")),
+      pickup_address: val("laadplaats"),
+      dropoff_date: val("losdag"),
+      dropoff_time_window: buildTimeWindow(val("losvensterVanaf"), val("losvensterTot")),
+      dropoff_address: val("losplaats"),
+      goods_description: val("goederen"),
+      dimensions_weight: val("afmetingen"),
+      facilities: val("faciliteiten") || null,
+      service_type: val("dienst") || null,
+      notes: val("opmerkingen") || null,
+    };
+
+    try {
+      const res = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        setSubmitError(data.error ?? "Er ging iets mis. Probeer het opnieuw.");
+        setSubmitting(false);
+        return;
+      }
+
+      setSubmitting(false);
+      setSubmitted(true);
+    } catch {
+      setSubmitError("Verbinding mislukt. Controleer uw internet en probeer het opnieuw.");
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -117,6 +165,12 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
       aria-label={mode === "full" ? "Offerteformulier" : "Contactformulier"}
       className="space-y-6"
     >
+      {/* Honeypot — hidden from real users */}
+      <div className="absolute -left-[9999px]" aria-hidden="true">
+        <label htmlFor="company">Company</label>
+        <input type="text" id="company" name="company" tabIndex={-1} autoComplete="off" />
+      </div>
+
       {mode === "full" && (
         <div className="rounded-lg border border-accent/20 bg-accent/5 p-4">
           <p className="text-sm font-medium text-primary">
@@ -444,6 +498,12 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
           className={inputClasses}
         />
       </div>
+
+      {submitError && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
+          {submitError}
+        </div>
+      )}
 
       <button
         type="submit"
