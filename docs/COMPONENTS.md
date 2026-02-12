@@ -97,7 +97,7 @@
 
 ## 5. ServicesGrid
 
-**Doel:** Overzichtsraster van alle 7 diensten als klikbare kaarten.
+**Doel:** Overzichtsraster van alle 6 diensten als klikbare kaarten.
 
 **Props / data:**
 
@@ -108,10 +108,9 @@
 ```json
 [
   { "id": "complete-ladingen", "name": "Complete ladingen", "shortDescription": "Hele vrachtwagen, direct geladen en doorgezet." },
-  { "id": "deelpartijen", "name": "Deelpartijen", "shortDescription": "Gedeelte van de wagen, voorhalen en overladen." },
+  { "id": "deelpartijen", "name": "Deelpartijen", "shortDescription": "Geen complete vracht? Wij regelen deelpartijen via ons netwerk." },
   { "id": "koeriersdiensten", "name": "Koeriersdiensten", "shortDescription": "Groot of klein, direct weggereden." },
-  { "id": "spoedzendingen", "name": "Spoedzendingen", "shortDescription": "Supersnelle service, levering binnen 2 dagen." },
-  { "id": "groupage", "name": "Groupage diensten", "shortDescription": "Hub naar hub, ideaal zonder haast." },
+  { "id": "spoedzendingen", "name": "Spoedzendingen", "shortDescription": "Supersnelle service, doorgaans binnen 2 werkdagen." },
   { "id": "geconditioneerd", "name": "Geconditioneerd transport", "shortDescription": "Transport op temperatuur: +20 tot -8 graden." },
   { "id": "exceptioneel", "name": "Exceptioneel transport", "shortDescription": "Niet-standaard maten en gewichten." }
 ]

@@ -22,11 +22,6 @@ const iconMap: Record<string, React.ReactNode> = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
   ),
-  layers: (
-    <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-    </svg>
-  ),
   thermometer: (
     <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 4a2 2 0 10-4 0v9.528a4 4 0 104 0V4z" />
@@ -45,7 +40,7 @@ export default function ServicesGrid() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-primary lg:text-4xl">
-            Zeven diensten. Eén aanspreekpunt.
+            Zes diensten. Eén aanspreekpunt.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-text-muted">
             Van spoedzending tot exceptioneel transport — wij regelen het.

@@ -29,9 +29,8 @@
 2. Deelpartijen
 3. Koeriersdiensten
 4. Spoedzendingen
-5. Groupage diensten
+5. Geconditioneerd transport
 6. Exceptioneel transport
-7. Geconditioneerd transport
 
 ### Contact (homepage)
 
@@ -95,15 +94,11 @@
 
 - "Uw zending wordt geladen door een specialist met supersnelle service. Naar o.a. Praag, Helsinki, Stockholm, Barcelona of Milaan, in 2 dagen af te leveren."
 
-### 3.5 Groupage diensten
-
-- "Uw zending wordt voorgehaald en wordt van hub naar hub vervoerd tot de uiteindelijke bestemming. Zeer geschikt voor zendingen welke geen haast hebben."
-
-### 3.6 Geconditioneerd transport
+### 3.5 Geconditioneerd transport
 
 - "Uw zending wordt vervoerd op de gewenste temperatuur. Of het nu +20 of -8 graden moet zijn."
 
-### 3.7 Exceptioneel transport
+### 3.6 Exceptioneel transport
 
 - "Voor maten en gewichten die niet in een standaard wagen passen. 3 meter breed, 18 meter lang, het kan allemaal. Voor deze zendingen geldt echter vaak een langere responstijd in het vinden van een passende oplossing."
 

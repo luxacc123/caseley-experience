@@ -7,7 +7,7 @@ import { contact } from "@/content/contact";
 export const metadata: Metadata = {
   title: "Diensten",
   description:
-    "Complete ladingen, spoedzendingen, geconditioneerd en exceptioneel transport. Ontdek onze 7 transportdiensten.",
+    "Complete ladingen, spoedzendingen, geconditioneerd en exceptioneel transport. Ontdek onze 6 transportdiensten.",
 };
 
 export default function DienstenPage() {

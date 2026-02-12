@@ -31,7 +31,7 @@ De website moet "miljardenbedrijf" ogen (premium, high-trust, conversiegericht),
 | URL | Pagina | Inhoud |
 |-----|--------|--------|
 | `/` | Home | Hero, USP-balk, diensten-overzicht, proces, over, CTA |
-| `/diensten` | Diensten | 7 diensten met anchor-links (#complete-ladingen, etc.) |
+| `/diensten` | Diensten | 6 diensten met anchor-links (#complete-ladingen, etc.) |
 | `/werkwijze` | Werkwijze | Processtappen, checklist, offerte-formulier |
 | `/over` | Over | Marc Caseley, kernwaarden, belofte |
 | `/contact` | Contact | Formulier, contactgegevens, bedrijfsgegevens |

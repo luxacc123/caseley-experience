@@ -22,9 +22,9 @@ export const services: Service[] = [
   {
     id: "deelpartijen",
     name: "Deelpartijen",
-    shortDescription: "Gedeelte van de wagen, voorhalen en overladen.",
+    shortDescription: "Geen complete vracht? Wij regelen deelpartijen via ons netwerk.",
     fullDescription:
-      "Geen volledige vrachtwagen nodig? Wij regelen een gedeelte van de wagen. Uw goederen worden voorgehaald en overgeladen — efficiënt en kostenbesparend.",
+      "Uw goederen worden voorgehaald en dan op de juiste vrachtwagen geladen welke deze in principe zelf zal gaan lossen. (ligt aan de ontvanger of deze een internationale vrachtwagen kan ontvangen op zijn terrein)",
     ctaLabel: "Offerte aanvragen voor een deelpartij",
     ctaHref: "/contact",
     icon: "package",
@@ -42,22 +42,12 @@ export const services: Service[] = [
   {
     id: "spoedzendingen",
     name: "Spoedzendingen",
-    shortDescription: "Supersnelle service, levering binnen 2 dagen.",
+    shortDescription: "Supersnelle service, doorgaans binnen 2 werkdagen.",
     fullDescription:
-      "Specialist in spoedzendingen met supersnelle service. Of het nu Praag, Helsinki, Stockholm, Barcelona of Milaan is — wij leveren binnen 2 dagen.",
+      "Specialist in spoedzendingen met supersnelle service. Bij spoedzendingen leveren wij doorgaans binnen 2 werkdagen.",
     ctaLabel: "Spoed? Bel direct: +31 6 1438 5060",
     ctaHref: "tel:+31614385060",
     icon: "clock",
-  },
-  {
-    id: "groupage",
-    name: "Groupage diensten",
-    shortDescription: "Hub naar hub, ideaal zonder haast.",
-    fullDescription:
-      "Uw goederen worden voorgehaald en vervoerd van hub naar hub. Ideaal voor zendingen zonder haast — scherpe tarieven, betrouwbare planning.",
-    ctaLabel: "Offerte aanvragen voor groupage",
-    ctaHref: "/contact",
-    icon: "layers",
   },
   {
     id: "geconditioneerd",

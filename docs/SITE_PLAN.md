@@ -9,7 +9,7 @@
 
 ```
 /                → Home
-/diensten        → Diensten (overzicht + alle 7 diensten)
+/diensten        → Diensten (overzicht + alle 6 diensten)
 /werkwijze       → Werkwijze (proces + offerte-formulier)
 /over            → Over Caseley Experience
 /contact         → Contact (formulier + gegevens)
@@ -84,7 +84,7 @@ Vier blokken naast elkaar (icoon + tekst):
 **Kop-opties:**
 
 1. "Van spoedzending tot exceptioneel transport"
-2. "Zeven diensten. Eén aanspreekpunt."
+2. "Zes diensten. Eén aanspreekpunt."
 3. "Wat we voor u regelen"
 
 **Layout:** Grid van 7 kaarten (ServicesGrid). Elke kaart:
@@ -157,10 +157,10 @@ aankomen — voor een concurrerende prijs."
 
 ### Sectie 2 — Snelmenu (anchor-links)
 
-Horizontaal menu naar alle 7 diensten:
-Complete ladingen | Deelpartijen | Koeriersdiensten | Spoedzendingen | Groupage | Geconditioneerd | Exceptioneel
+Horizontaal menu naar alle 6 diensten:
+Complete ladingen | Deelpartijen | Koeriersdiensten | Spoedzendingen | Geconditioneerd | Exceptioneel
 
-### Secties 3–9 — Per dienst een blok
+### Secties 3–8 — Per dienst een blok
 
 #### 3. Complete ladingen (#complete-ladingen)
 
@@ -169,7 +169,7 @@ Complete ladingen | Deelpartijen | Koeriersdiensten | Spoedzendingen | Groupage 
 
 #### 4. Deelpartijen (#deelpartijen)
 
-**Tekst:** "Geen volledige vrachtwagen nodig? Wij regelen een gedeelte van de wagen. Uw goederen worden voorgehaald en overgeladen — efficiënt en kostenbesparend."
+**Tekst:** "Uw goederen worden voorgehaald en dan op de juiste vrachtwagen geladen welke deze in principe zelf zal gaan lossen. (ligt aan de ontvanger of deze een internationale vrachtwagen kan ontvangen op zijn terrein)"
 **CTA:** "Offerte aanvragen voor een deelpartij"
 
 #### 5. Koeriersdiensten (#koeriersdiensten)
@@ -179,25 +179,20 @@ Complete ladingen | Deelpartijen | Koeriersdiensten | Spoedzendingen | Groupage 
 
 #### 6. Spoedzendingen (#spoedzendingen)
 
-**Tekst:** "Specialist in spoedzendingen met supersnelle service. Of het nu Praag, Helsinki, Stockholm, Barcelona of Milaan is — wij leveren binnen 2 dagen."
+**Tekst:** "Specialist in spoedzendingen met supersnelle service. Bij spoedzendingen leveren wij doorgaans binnen 2 werkdagen."
 **CTA:** "Spoed? Bel direct: +31 6 1438 5060"
 
-#### 7. Groupage diensten (#groupage)
-
-**Tekst:** "Uw goederen worden voorgehaald en vervoerd van hub naar hub. Ideaal voor zendingen zonder haast — scherpe tarieven, betrouwbare planning."
-**CTA:** "Offerte aanvragen voor groupage"
-
-#### 8. Geconditioneerd transport (#geconditioneerd)
+#### 7. Geconditioneerd transport (#geconditioneerd)
 
 **Tekst:** "Transport op de gewenste temperatuur. Van +20 tot -8 graden — uw temperatuurgevoelige goederen in de beste condities."
 **CTA:** "Offerte aanvragen voor geconditioneerd transport"
 
-#### 9. Exceptioneel transport (#exceptioneel)
+#### 8. Exceptioneel transport (#exceptioneel)
 
 **Tekst:** "Niet-standaard maten of gewichten? Wij regelen transport voor ladingen tot 3 meter breed en 18 meter lang. Neem eerst telefonisch contact op zodat we de verwachtingen kunnen afstemmen."
 **CTA:** "Bel voor exceptioneel transport: +31 6 1438 5060"
 
-### Sectie 10 — Twijfel-CTA
+### Sectie 9 — Twijfel-CTA
 
 **Kop:** "Niet zeker welke dienst u nodig heeft?"
 **Tekst:** "Geen probleem. Bel of mail ons — we denken graag mee."
@@ -362,7 +357,7 @@ Alleen als geen extra API-kosten of privacy-issues.
 | Pagina | Title tag | Meta description |
 |--------|-----------|------------------|
 | Home | Caseley Experience — Wegtransport door heel Europa | Transport over de weg, snel en betrouwbaar. 24/7 bereikbaar, offerte binnen 30 minuten. 20+ jaar ervaring. |
-| Diensten | Diensten — Caseley Experience | Complete ladingen, spoedzendingen, geconditioneerd en exceptioneel transport. Ontdek onze 7 transportdiensten. |
+| Diensten | Diensten — Caseley Experience | Complete ladingen, spoedzendingen, geconditioneerd en exceptioneel transport. Ontdek onze 6 transportdiensten. |
 | Werkwijze | Werkwijze — Caseley Experience | Zo werkt een aanvraag. Deel uw transportbehoefte en ontvang binnen 30 minuten een offerte. |
 | Over | Over ons — Caseley Experience | Marc Caseley: 20+ jaar ervaring in transport en logistiek. Persoonlijk contact, betrouwbaar netwerk. |
 | Contact | Contact — Caseley Experience | Neem contact op: +31 6 1438 5060 of info@caseleyexperience.nl. Reactie binnen 30 minuten. |
