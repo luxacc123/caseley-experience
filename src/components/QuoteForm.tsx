@@ -8,6 +8,15 @@ interface QuoteFormProps {
   mode?: "full" | "short";
 }
 
+const UNIT_TYPES = [
+  { value: "europallet", label: "Europallet", length: 120, width: 80 },
+  { value: "blokpallet", label: "Blokpallet", length: 120, width: 100 },
+  { value: "wegwerppallet", label: "Wegwerp pallet", length: null, width: null },
+  { value: "rolcontainer", label: "Rolcontainer", length: 80, width: 70 },
+  { value: "doos_colli", label: "Doos / Colli", length: null, width: null },
+  { value: "anders", label: "Anders", length: null, width: null },
+] as const;
+
 export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -16,6 +25,35 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
     laad?: string;
     los?: string;
   }>({});
+
+  // Structured dimensions state
+  const [unitType, setUnitType] = useState("");
+  const [lengthCm, setLengthCm] = useState("");
+  const [widthCm, setWidthCm] = useState("");
+  const [showCustomDimensions, setShowCustomDimensions] = useState(false);
+
+  // Facilities state
+  const [facilityNotes, setFacilityNotes] = useState("");
+
+  function handleUnitTypeChange(value: string) {
+    setUnitType(value);
+    const preset = UNIT_TYPES.find((u) => u.value === value);
+    if (preset?.length && preset?.width) {
+      setLengthCm(String(preset.length));
+      setWidthCm(String(preset.width));
+      setShowCustomDimensions(false);
+    } else {
+      setLengthCm("");
+      setWidthCm("");
+      setShowCustomDimensions(value === "anders");
+    }
+  }
+
+  const needsDimensionInputs =
+    unitType === "anders" ||
+    unitType === "wegwerppallet" ||
+    unitType === "doos_colli" ||
+    showCustomDimensions;
 
   function validateVensters(form: HTMLFormElement): boolean {
     const laadVanaf = form.elements.namedItem("laadvensterVanaf") as HTMLInputElement | null;
@@ -52,6 +90,16 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
     const fd = new FormData(form);
     const val = (name: string) => (fd.get(name) as string) ?? "";
 
+    // Collect checked facilities
+    const facilityKeys = [
+      "needs_tail_lift",
+      "needs_moffett",
+      "has_forklift",
+      "has_dock",
+      "no_equipment_available",
+    ];
+    const checkedFacilities = facilityKeys.filter((k) => fd.get(k) === "on");
+
     const payload = {
       name: val("naam"),
       email: val("email"),
@@ -64,8 +112,14 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
       dropoff_time_window: buildTimeWindow(val("losvensterVanaf"), val("losvensterTot")),
       dropoff_address: val("losplaats"),
       goods_description: val("goederen"),
-      dimensions_weight: val("afmetingen"),
-      facilities: val("faciliteiten") || null,
+      unit_type: val("unit_type") || null,
+      unit_count: val("unit_count") ? Number(val("unit_count")) : null,
+      length_cm: val("length_cm") ? Number(val("length_cm")) : null,
+      width_cm: val("width_cm") ? Number(val("width_cm")) : null,
+      height_cm: val("height_cm") ? Number(val("height_cm")) : null,
+      weight_kg: val("weight_kg") ? Number(val("weight_kg")) : null,
+      facilities: checkedFacilities.length > 0 ? checkedFacilities : null,
+      facility_notes: val("facility_notes") || null,
       service_type: val("dienst") || null,
       notes: val("opmerkingen") || null,
     };
@@ -158,6 +212,7 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
   const inputClasses =
     "w-full rounded-lg border border-border bg-white px-4 py-3 text-sm text-text transition-colors placeholder:text-text-muted/50 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20";
   const labelClasses = "block text-sm font-medium text-text mb-1.5";
+  const checkboxLabelClasses = "flex items-center gap-2 text-sm text-text";
 
   return (
     <form
@@ -249,12 +304,11 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
 
       {mode === "full" && (
         <>
-          {/* Transportgegevens */}
+          {/* ── LADEN ── */}
           <fieldset className="space-y-5">
             <legend className="text-sm font-semibold uppercase tracking-wider text-text-muted">
-              Transportgegevens
+              Laden
             </legend>
-            {/* Laaddag + Laadvenster */}
             <div>
               <label htmlFor="laaddag" className={labelClasses}>
                 Gewenste laaddag{" "}
@@ -314,8 +368,30 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
                 </p>
               )}
             </div>
+            <div>
+              <label htmlFor="laadplaats" className={labelClasses}>
+                Laadplaats (volledig adres){" "}
+                <span className="text-red-500" aria-hidden="true">
+                  *
+                </span>
+              </label>
+              <textarea
+                id="laadplaats"
+                name="laadplaats"
+                required
+                aria-required="true"
+                rows={2}
+                placeholder="Straat, postcode, stad, land"
+                className={inputClasses}
+              />
+            </div>
+          </fieldset>
 
-            {/* Losdag + Losvenster */}
+          {/* ── LOSSEN ── */}
+          <fieldset className="space-y-5">
+            <legend className="text-sm font-semibold uppercase tracking-wider text-text-muted">
+              Lossen
+            </legend>
             <div>
               <label htmlFor="losdag" className={labelClasses}>
                 Gewenste losdag{" "}
@@ -375,45 +451,26 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
                 </p>
               )}
             </div>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <label htmlFor="laadplaats" className={labelClasses}>
-                  Laadplaats (volledig adres){" "}
-                  <span className="text-red-500" aria-hidden="true">
-                    *
-                  </span>
-                </label>
-                <textarea
-                  id="laadplaats"
-                  name="laadplaats"
-                  required
-                  aria-required="true"
-                  rows={2}
-                  placeholder="Straat, postcode, stad, land"
-                  className={inputClasses}
-                />
-              </div>
-              <div>
-                <label htmlFor="losplaats" className={labelClasses}>
-                  Losplaats (volledig adres){" "}
-                  <span className="text-red-500" aria-hidden="true">
-                    *
-                  </span>
-                </label>
-                <textarea
-                  id="losplaats"
-                  name="losplaats"
-                  required
-                  aria-required="true"
-                  rows={2}
-                  placeholder="Straat, postcode, stad, land"
-                  className={inputClasses}
-                />
-              </div>
+            <div>
+              <label htmlFor="losplaats" className={labelClasses}>
+                Losplaats (volledig adres){" "}
+                <span className="text-red-500" aria-hidden="true">
+                  *
+                </span>
+              </label>
+              <textarea
+                id="losplaats"
+                name="losplaats"
+                required
+                aria-required="true"
+                rows={2}
+                placeholder="Straat, postcode, stad, land"
+                className={inputClasses}
+              />
             </div>
           </fieldset>
 
-          {/* Goederen */}
+          {/* ── GOEDEREN ── */}
           <fieldset className="space-y-5">
             <legend className="text-sm font-semibold uppercase tracking-wider text-text-muted">
               Goederen
@@ -435,49 +492,208 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
                 className={inputClasses}
               />
             </div>
+
+            {/* Unit type + count */}
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label htmlFor="unit_type" className={labelClasses}>
+                  Type verpakking{" "}
+                  <span className="text-red-500" aria-hidden="true">
+                    *
+                  </span>
+                </label>
+                <select
+                  id="unit_type"
+                  name="unit_type"
+                  required
+                  aria-required="true"
+                  value={unitType}
+                  onChange={(e) => handleUnitTypeChange(e.target.value)}
+                  className={inputClasses}
+                >
+                  <option value="">— Selecteer —</option>
+                  {UNIT_TYPES.map((u) => (
+                    <option key={u.value} value={u.value}>
+                      {u.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="unit_count" className={labelClasses}>
+                  Aantal{" "}
+                  <span className="text-red-500" aria-hidden="true">
+                    *
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  id="unit_count"
+                  name="unit_count"
+                  required
+                  aria-required="true"
+                  min={1}
+                  placeholder="Bijv. 4"
+                  className={inputClasses}
+                />
+              </div>
+            </div>
+
+            {/* Dimensions: auto-filled or manual */}
+            {unitType && (
+              <div>
+                {!needsDimensionInputs && (
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-text-muted">
+                      Standaardmaat: {lengthCm} x {widthCm} cm
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setShowCustomDimensions(true)}
+                      className="text-xs font-medium text-accent hover:text-accent-hover"
+                    >
+                      Afwijkende maat
+                    </button>
+                  </div>
+                )}
+                {needsDimensionInputs && (
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <div>
+                      <label htmlFor="length_cm" className="mb-1 block text-xs text-text-muted">
+                        Lengte (cm)
+                      </label>
+                      <input
+                        type="number"
+                        id="length_cm"
+                        name="length_cm"
+                        min={1}
+                        value={lengthCm}
+                        onChange={(e) => setLengthCm(e.target.value)}
+                        placeholder="120"
+                        className={inputClasses}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="width_cm" className="mb-1 block text-xs text-text-muted">
+                        Breedte (cm)
+                      </label>
+                      <input
+                        type="number"
+                        id="width_cm"
+                        name="width_cm"
+                        min={1}
+                        value={widthCm}
+                        onChange={(e) => setWidthCm(e.target.value)}
+                        placeholder="80"
+                        className={inputClasses}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="height_cm" className="mb-1 block text-xs text-text-muted">
+                        Hoogte (cm)
+                      </label>
+                      <input
+                        type="number"
+                        id="height_cm"
+                        name="height_cm"
+                        min={1}
+                        placeholder="100"
+                        className={inputClasses}
+                      />
+                    </div>
+                  </div>
+                )}
+                {/* Hidden fields for auto-filled dimensions */}
+                {!needsDimensionInputs && (
+                  <>
+                    <input type="hidden" name="length_cm" value={lengthCm} />
+                    <input type="hidden" name="width_cm" value={widthCm} />
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Weight */}
             <div>
-              <label htmlFor="afmetingen" className={labelClasses}>
-                Afmetingen en gewicht{" "}
+              <label htmlFor="weight_kg" className={labelClasses}>
+                Totaalgewicht (kg){" "}
                 <span className="text-red-500" aria-hidden="true">
                   *
                 </span>
               </label>
               <input
-                type="text"
-                id="afmetingen"
-                name="afmetingen"
+                type="number"
+                id="weight_kg"
+                name="weight_kg"
                 required
                 aria-required="true"
-                placeholder="Bijv. 2 pallets, 120x80x100 cm, 500 kg"
+                min={1}
+                placeholder="Bijv. 500"
                 className={inputClasses}
               />
-            </div>
-            <div>
-              <label htmlFor="faciliteiten" className={labelClasses}>
-                Faciliteiten / klep nodig?
-              </label>
-              <textarea
-                id="faciliteiten"
-                name="faciliteiten"
-                rows={2}
-                placeholder="Laad-/losfaciliteiten, klep, etc."
-                className={inputClasses}
-              />
-            </div>
-            <div>
-              <label htmlFor="dienst" className={labelClasses}>
-                Type dienst
-              </label>
-              <select id="dienst" name="dienst" className={inputClasses}>
-                <option value="">— Selecteer (optioneel) —</option>
-                {services.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
             </div>
           </fieldset>
+
+          {/* ── FACILITEITEN ── */}
+          <fieldset className="space-y-5">
+            <legend className="text-sm font-semibold uppercase tracking-wider text-text-muted">
+              Faciliteiten
+            </legend>
+            <p className="text-sm text-text-muted">
+              Welke laad-/losfaciliteiten zijn beschikbaar of nodig?
+            </p>
+            <div className="space-y-3">
+              <label className={checkboxLabelClasses}>
+                <input type="checkbox" name="needs_tail_lift" className="rounded border-border" />
+                Laadklep nodig
+              </label>
+              <label className={checkboxLabelClasses}>
+                <input type="checkbox" name="needs_moffett" className="rounded border-border" />
+                Moffett / meeneemheftruck nodig
+              </label>
+              <label className={checkboxLabelClasses}>
+                <input type="checkbox" name="has_forklift" className="rounded border-border" />
+                Heftruck aanwezig op locatie
+              </label>
+              <label className={checkboxLabelClasses}>
+                <input type="checkbox" name="has_dock" className="rounded border-border" />
+                Laaddock aanwezig
+              </label>
+              <label className={checkboxLabelClasses}>
+                <input type="checkbox" name="no_equipment_available" className="rounded border-border" />
+                Geen faciliteiten beschikbaar
+              </label>
+            </div>
+            <div>
+              <label htmlFor="facility_notes" className={labelClasses}>
+                Toelichting faciliteiten
+              </label>
+              <input
+                type="text"
+                id="facility_notes"
+                name="facility_notes"
+                value={facilityNotes}
+                onChange={(e) => setFacilityNotes(e.target.value)}
+                placeholder="Overige opmerkingen over faciliteiten"
+                className={inputClasses}
+              />
+            </div>
+          </fieldset>
+
+          {/* ── DIENST ── */}
+          <div>
+            <label htmlFor="dienst" className={labelClasses}>
+              Type dienst
+            </label>
+            <select id="dienst" name="dienst" className={inputClasses}>
+              <option value="">— Selecteer (optioneel) —</option>
+              {services.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </>
       )}
 

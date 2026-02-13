@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    /* ── Validate required fields ── */
-    const required = [
+    /* ── Validate required string fields ── */
+    const requiredStrings = [
       "name",
       "email",
       "phone",
@@ -54,10 +54,9 @@ export async function POST(request: NextRequest) {
       "dropoff_date",
       "dropoff_address",
       "goods_description",
-      "dimensions_weight",
     ] as const;
 
-    for (const field of required) {
+    for (const field of requiredStrings) {
       if (!body[field] || typeof body[field] !== "string" || !body[field].trim()) {
         return NextResponse.json(
           { ok: false, error: `Veld "${field}" is verplicht.` },
@@ -66,7 +65,34 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    /* ── Validate required numeric fields ── */
+    if (!body.unit_type || typeof body.unit_type !== "string") {
+      return NextResponse.json(
+        { ok: false, error: `Veld "unit_type" is verplicht.` },
+        { status: 400 },
+      );
+    }
+
+    if (!body.unit_count || typeof body.unit_count !== "number" || body.unit_count < 1) {
+      return NextResponse.json(
+        { ok: false, error: `Veld "unit_count" is verplicht.` },
+        { status: 400 },
+      );
+    }
+
+    if (!body.weight_kg || typeof body.weight_kg !== "number" || body.weight_kg < 1) {
+      return NextResponse.json(
+        { ok: false, error: `Veld "weight_kg" is verplicht.` },
+        { status: 400 },
+      );
+    }
+
     const userAgent = request.headers.get("user-agent") ?? "";
+
+    /* ── Build facilities string from array ── */
+    const facilitiesValue = Array.isArray(body.facilities)
+      ? body.facilities.join(", ")
+      : body.facilities || null;
 
     /* ── Insert into Supabase ── */
     const supabase = getSupabaseAdmin();
@@ -83,8 +109,14 @@ export async function POST(request: NextRequest) {
         dropoff_time_window: body.dropoff_time_window || null,
         dropoff_address: body.dropoff_address.trim(),
         goods_description: body.goods_description.trim(),
-        dimensions_weight: body.dimensions_weight.trim(),
-        facilities: body.facilities?.trim() || null,
+        unit_type: body.unit_type,
+        unit_count: body.unit_count,
+        length_cm: typeof body.length_cm === "number" ? body.length_cm : null,
+        width_cm: typeof body.width_cm === "number" ? body.width_cm : null,
+        height_cm: typeof body.height_cm === "number" ? body.height_cm : null,
+        weight_kg: body.weight_kg,
+        facilities: facilitiesValue,
+        facility_notes: body.facility_notes?.trim() || null,
         service_type: body.service_type?.trim() || null,
         notes: body.notes?.trim() || null,
         source: "website",
