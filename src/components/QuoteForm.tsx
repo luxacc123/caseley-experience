@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { services } from "@/content/services";
 import { contact } from "@/content/contact";
 
@@ -21,10 +21,12 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [validationSummary, setValidationSummary] = useState<string | null>(null);
   const [vensterErrors, setVensterErrors] = useState<{
     laad?: string;
     los?: string;
   }>({});
+  const formRef = useRef<HTMLFormElement>(null);
 
   // Structured dimensions state
   const [unitType, setUnitType] = useState("");
@@ -55,6 +57,29 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
     unitType === "doos_colli" ||
     showCustomDimensions;
 
+  /**
+   * Parse "HH:MM" to minutes since midnight.
+   * Returns null for empty/invalid input.
+   */
+  function timeToMinutes(t: string): number | null {
+    if (!t) return null;
+    const [h, m] = t.split(":").map(Number);
+    if (isNaN(h) || isNaN(m)) return null;
+    return h * 60 + m;
+  }
+
+  /**
+   * Validate a time window. Overnight windows are allowed
+   * (e.g. 23:30→00:15 = 45 min), but zero-length windows are rejected.
+   */
+  function isValidTimeWindow(from: string, to: string): boolean {
+    const fromMin = timeToMinutes(from);
+    const toMin = timeToMinutes(to);
+    if (fromMin === null || toMin === null) return true; // incomplete = skip
+    if (fromMin === toMin) return false; // zero-length
+    return true; // same-day or overnight, both fine
+  }
+
   function validateVensters(form: HTMLFormElement): boolean {
     const laadVanaf = form.elements.namedItem("laadvensterVanaf") as HTMLInputElement | null;
     const laadTot = form.elements.namedItem("laadvensterTot") as HTMLInputElement | null;
@@ -63,11 +88,11 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
 
     const errors: { laad?: string; los?: string } = {};
 
-    if (laadVanaf?.value && laadTot?.value && laadTot.value <= laadVanaf.value) {
-      errors.laad = "\"Tot\" moet later zijn dan \"vanaf\".";
+    if (laadVanaf?.value && laadTot?.value && !isValidTimeWindow(laadVanaf.value, laadTot.value)) {
+      errors.laad = "\"Vanaf\" en \"tot\" mogen niet gelijk zijn.";
     }
-    if (losVanaf?.value && losTot?.value && losTot.value <= losVanaf.value) {
-      errors.los = "\"Tot\" moet later zijn dan \"vanaf\".";
+    if (losVanaf?.value && losTot?.value && !isValidTimeWindow(losVanaf.value, losTot.value)) {
+      errors.los = "\"Vanaf\" en \"tot\" mogen niet gelijk zijn.";
     }
 
     setVensterErrors(errors);
@@ -79,11 +104,103 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
     return `${from}–${to}`;
   }
 
+  /**
+   * Scroll smoothly to the first invalid field and focus it.
+   * Checks both native :invalid fields and venster-error fields.
+   */
+  function scrollToFirstInvalid(form: HTMLFormElement) {
+    // Collect all invalid elements: native + venster errors
+    const candidates: HTMLElement[] = [];
+
+    const nativeInvalid = form.querySelector(":invalid:not(fieldset)") as HTMLElement | null;
+    if (nativeInvalid) candidates.push(nativeInvalid);
+
+    // Check venster error fields (by re-reading from form, since state may not have flushed)
+    const lv = form.elements.namedItem("laadvensterVanaf") as HTMLInputElement | null;
+    const lt = form.elements.namedItem("laadvensterTot") as HTMLInputElement | null;
+    if (lv?.value && lt?.value && !isValidTimeWindow(lv.value, lt.value) && lv) {
+      candidates.push(lv);
+    }
+    const rv = form.elements.namedItem("losvensterVanaf") as HTMLInputElement | null;
+    const rt = form.elements.namedItem("losvensterTot") as HTMLInputElement | null;
+    if (rv?.value && rt?.value && !isValidTimeWindow(rv.value, rt.value) && rv) {
+      candidates.push(rv);
+    }
+
+    // Pick the one highest in DOM order (lowest offsetTop)
+    const first = candidates.sort((a, b) => {
+      const rectA = a.getBoundingClientRect();
+      const rectB = b.getBoundingClientRect();
+      return rectA.top - rectB.top;
+    })[0];
+
+    if (first) {
+      first.scrollIntoView({ behavior: "smooth", block: "center" });
+      first.focus({ preventScroll: true });
+    }
+  }
+
+  /**
+   * Count how many required fields are currently invalid (browser validation).
+   */
+  function countInvalidFields(form: HTMLFormElement): number {
+    const inputs = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(
+      "input, textarea, select"
+    );
+    let count = 0;
+    for (const el of inputs) {
+      if (!el.checkValidity()) count++;
+    }
+    return count;
+  }
+
+  /**
+   * Explicit validation pass: check browser validity + venster logic,
+   * show summary, scroll to first error. Returns true if form is valid.
+   */
+  function runFullValidation(form: HTMLFormElement): boolean {
+    const vensterOk = validateVensters(form);
+    const invalidCount = countInvalidFields(form);
+
+    // Count venster errors (set by validateVensters above, but we need
+    // to count from the return since state hasn't flushed yet)
+    let vensterErrorCount = 0;
+    if (!vensterOk) {
+      const lv = form.elements.namedItem("laadvensterVanaf") as HTMLInputElement | null;
+      const lt = form.elements.namedItem("laadvensterTot") as HTMLInputElement | null;
+      const rv = form.elements.namedItem("losvensterVanaf") as HTMLInputElement | null;
+      const rt = form.elements.namedItem("losvensterTot") as HTMLInputElement | null;
+      if (lv?.value && lt?.value && !isValidTimeWindow(lv.value, lt.value)) vensterErrorCount++;
+      if (rv?.value && rt?.value && !isValidTimeWindow(rv.value, rt.value)) vensterErrorCount++;
+    }
+
+    const totalErrors = invalidCount + vensterErrorCount;
+
+    if (totalErrors > 0) {
+      // Mark form as attempted so CSS highlights invalid fields
+      form.setAttribute("data-attempted", "");
+
+      if (totalErrors === 1) {
+        setValidationSummary("Controleer het gemarkeerde veld.");
+      } else {
+        setValidationSummary("Er zijn meerdere velden niet goed ingevuld. Controleer de gemarkeerde velden.");
+      }
+
+      scrollToFirstInvalid(form);
+      return false;
+    }
+
+    setValidationSummary(null);
+    return true;
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitError(null);
+    setValidationSummary(null);
     const form = e.currentTarget;
-    if (!validateVensters(form)) return;
+
+    if (!runFullValidation(form)) return;
 
     setSubmitting(true);
 
@@ -211,12 +328,16 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
 
   const inputClasses =
     "w-full rounded-lg border border-border bg-white px-4 py-3 text-sm text-text transition-colors placeholder:text-text-muted/50 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20";
+  const inputErrorClasses =
+    "w-full rounded-lg border border-red-500 bg-white px-4 py-3 text-sm text-text transition-colors placeholder:text-text-muted/50 focus:border-accent focus:outline-none focus:ring-2 focus:ring-red-200";
   const labelClasses = "block text-sm font-medium text-text mb-1.5";
   const checkboxLabelClasses = "flex items-center gap-2 text-sm text-text";
 
   return (
     <form
+      ref={formRef}
       onSubmit={handleSubmit}
+      noValidate
       aria-label={mode === "full" ? "Offerteformulier" : "Contactformulier"}
       className="space-y-6"
     >
@@ -344,7 +465,7 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
                     required
                     aria-required="true"
                     placeholder="08:00"
-                    className={inputClasses}
+                    className={vensterErrors.laad ? inputErrorClasses : inputClasses}
                   />
                 </div>
                 <div>
@@ -358,7 +479,7 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
                     required
                     aria-required="true"
                     placeholder="17:00"
-                    className={inputClasses}
+                    className={vensterErrors.laad ? inputErrorClasses : inputClasses}
                   />
                 </div>
               </div>
@@ -427,7 +548,7 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
                     required
                     aria-required="true"
                     placeholder="08:00"
-                    className={inputClasses}
+                    className={vensterErrors.los ? inputErrorClasses : inputClasses}
                   />
                 </div>
                 <div>
@@ -441,7 +562,7 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
                     required
                     aria-required="true"
                     placeholder="17:00"
-                    className={inputClasses}
+                    className={vensterErrors.los ? inputErrorClasses : inputClasses}
                   />
                 </div>
               </div>
@@ -714,6 +835,12 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
           className={inputClasses}
         />
       </div>
+
+      {validationSummary && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert" aria-live="assertive">
+          {validationSummary}
+        </div>
+      )}
 
       {submitError && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
