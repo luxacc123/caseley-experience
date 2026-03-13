@@ -32,7 +32,6 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
   const [unitType, setUnitType] = useState("");
   const [lengthCm, setLengthCm] = useState("");
   const [widthCm, setWidthCm] = useState("");
-  const [showCustomDimensions, setShowCustomDimensions] = useState(false);
 
   // Facilities state
   const [facilityNotes, setFacilityNotes] = useState("");
@@ -43,19 +42,21 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
     if (preset?.length && preset?.width) {
       setLengthCm(String(preset.length));
       setWidthCm(String(preset.width));
-      setShowCustomDimensions(false);
     } else {
       setLengthCm("");
       setWidthCm("");
-      setShowCustomDimensions(value === "anders");
     }
   }
 
+  /** Show manual dimension inputs only for types without a standard size */
   const needsDimensionInputs =
     unitType === "anders" ||
     unitType === "wegwerppallet" ||
-    unitType === "doos_colli" ||
-    showCustomDimensions;
+    unitType === "doos_colli";
+
+  /** Standard type with known dimensions — send silently via hidden fields */
+  const hasPresetDimensions =
+    unitType !== "" && !needsDimensionInputs;
 
   /**
    * Parse "HH:MM" to minutes since midnight.
@@ -666,78 +667,60 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
               </div>
             </div>
 
-            {/* Dimensions: auto-filled or manual */}
-            {unitType && (
-              <div>
-                {!needsDimensionInputs && (
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm text-text-muted">
-                      Standaardmaat: {lengthCm} x {widthCm} cm
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setShowCustomDimensions(true)}
-                      className="text-xs font-medium text-accent hover:text-accent-hover"
-                    >
-                      Afwijkende maat
-                    </button>
-                  </div>
-                )}
-                {needsDimensionInputs && (
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    <div>
-                      <label htmlFor="length_cm" className="mb-1 block text-xs text-text-muted">
-                        Lengte (cm)
-                      </label>
-                      <input
-                        type="number"
-                        id="length_cm"
-                        name="length_cm"
-                        min={1}
-                        value={lengthCm}
-                        onChange={(e) => setLengthCm(e.target.value)}
-                        placeholder="120"
-                        className={inputClasses}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="width_cm" className="mb-1 block text-xs text-text-muted">
-                        Breedte (cm)
-                      </label>
-                      <input
-                        type="number"
-                        id="width_cm"
-                        name="width_cm"
-                        min={1}
-                        value={widthCm}
-                        onChange={(e) => setWidthCm(e.target.value)}
-                        placeholder="80"
-                        className={inputClasses}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="height_cm" className="mb-1 block text-xs text-text-muted">
-                        Hoogte (cm)
-                      </label>
-                      <input
-                        type="number"
-                        id="height_cm"
-                        name="height_cm"
-                        min={1}
-                        placeholder="100"
-                        className={inputClasses}
-                      />
-                    </div>
-                  </div>
-                )}
-                {/* Hidden fields for auto-filled dimensions */}
-                {!needsDimensionInputs && (
-                  <>
-                    <input type="hidden" name="length_cm" value={lengthCm} />
-                    <input type="hidden" name="width_cm" value={widthCm} />
-                  </>
-                )}
+            {/* Dimensions: manual input for non-standard types */}
+            {needsDimensionInputs && (
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div>
+                  <label htmlFor="length_cm" className="mb-1 block text-xs text-text-muted">
+                    Lengte (cm)
+                  </label>
+                  <input
+                    type="number"
+                    id="length_cm"
+                    name="length_cm"
+                    min={1}
+                    value={lengthCm}
+                    onChange={(e) => setLengthCm(e.target.value)}
+                    placeholder="120"
+                    className={inputClasses}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="width_cm" className="mb-1 block text-xs text-text-muted">
+                    Breedte (cm)
+                  </label>
+                  <input
+                    type="number"
+                    id="width_cm"
+                    name="width_cm"
+                    min={1}
+                    value={widthCm}
+                    onChange={(e) => setWidthCm(e.target.value)}
+                    placeholder="80"
+                    className={inputClasses}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="height_cm" className="mb-1 block text-xs text-text-muted">
+                    Hoogte (cm)
+                  </label>
+                  <input
+                    type="number"
+                    id="height_cm"
+                    name="height_cm"
+                    min={1}
+                    placeholder="100"
+                    className={inputClasses}
+                  />
+                </div>
               </div>
+            )}
+            {/* Hidden fields for standard-size packaging types */}
+            {hasPresetDimensions && (
+              <>
+                <input type="hidden" name="length_cm" value={lengthCm} />
+                <input type="hidden" name="width_cm" value={widthCm} />
+              </>
             )}
 
             {/* Weight */}
