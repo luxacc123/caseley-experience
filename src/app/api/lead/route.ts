@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { sendLeadNotification } from "@/lib/sendLeadNotification";
+import type { LeadRecord } from "@/lib/leadTypes";
 
 export const dynamic = "force-dynamic";
 
@@ -139,7 +141,44 @@ export async function POST(request: NextRequest) {
 
     const leadId = data.id;
 
-    /* ── Make webhook (fire-and-forget) ── */
+    /* ── Build typed lead record for notifications ── */
+    const leadRecord: LeadRecord = {
+      id: leadId,
+      name: body.name.trim(),
+      email: body.email.trim(),
+      phone: body.phone.trim(),
+      pickup_date: body.pickup_date,
+      pickup_time_window: body.pickup_time_window || null,
+      pickup_address: body.pickup_address.trim(),
+      dropoff_date: body.dropoff_date,
+      dropoff_time_window: body.dropoff_time_window || null,
+      dropoff_address: body.dropoff_address.trim(),
+      goods_description: body.goods_description.trim(),
+      unit_type: body.unit_type,
+      unit_count: body.unit_count,
+      length_cm: typeof body.length_cm === "number" ? body.length_cm : null,
+      width_cm: typeof body.width_cm === "number" ? body.width_cm : null,
+      height_cm: typeof body.height_cm === "number" ? body.height_cm : null,
+      weight_kg: body.weight_kg,
+      needs_tail_lift: facilityList.includes("needs_tail_lift"),
+      needs_moffett: facilityList.includes("needs_moffett"),
+      has_forklift: facilityList.includes("has_forklift"),
+      has_dock: facilityList.includes("has_dock"),
+      no_equipment_available: facilityList.includes("no_equipment_available"),
+      facility_notes: body.facility_notes?.trim() || null,
+      service_type: body.service_type?.trim() || null,
+      notes: body.notes?.trim() || null,
+    };
+
+    /* ── Email notification with PDF + CSV (non-blocking) ── */
+    try {
+      await sendLeadNotification(leadRecord);
+    } catch (emailError) {
+      // Email failure must not break the response — lead is safe in Supabase
+      console.error("Lead notification error:", emailError);
+    }
+
+    /* ── Make webhook (optional, fire-and-forget) ── */
     const webhookUrl = process.env.MAKE_WEBHOOK_URL;
     if (webhookUrl) {
       try {
@@ -149,7 +188,6 @@ export async function POST(request: NextRequest) {
           body: JSON.stringify({ lead_id: leadId, ...body }),
         });
       } catch (webhookError) {
-        // Webhook failure must not break the response
         console.error("Make webhook error:", webhookError);
       }
     }
