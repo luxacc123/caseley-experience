@@ -151,9 +151,12 @@ export async function sendLeadNotification(lead: LeadRecord): Promise<boolean> {
   }
 
   try {
+    console.log(`[LeadNotification] Starting email for lead ${lead.id} to ${toAddress}`);
+
     // Generate attachments
     const pdfBuffer = generateLeadPdf(lead);
     const csvContent = generateLeadCsv(lead);
+    console.log(`[LeadNotification] Attachments generated — PDF: ${pdfBuffer.length} bytes, CSV: ${csvContent.length} chars`);
 
     // Sanitize name for filename
     const safeName = lead.name
@@ -165,7 +168,7 @@ export async function sendLeadNotification(lead: LeadRecord): Promise<boolean> {
     const html = buildEmailHtml(lead);
 
     const resend = getResend();
-    const { error } = await resend.emails.send({
+    const { data: resendData, error } = await resend.emails.send({
       from: fromAddress,
       to: [toAddress],
       subject: `Nieuwe offerteaanvraag — ${lead.name}`,
@@ -185,13 +188,14 @@ export async function sendLeadNotification(lead: LeadRecord): Promise<boolean> {
     });
 
     if (error) {
-      console.error("Resend email error:", error);
+      console.error("[LeadNotification] Resend API error:", JSON.stringify(error));
       return false;
     }
 
+    console.log(`[LeadNotification] Email sent successfully — Resend ID: ${resendData?.id}`);
     return true;
   } catch (err) {
-    console.error("Lead notification error:", err);
+    console.error("[LeadNotification] Unexpected error:", err);
     return false;
   }
 }
