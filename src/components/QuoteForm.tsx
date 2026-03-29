@@ -81,7 +81,6 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
     const duration = toMin >= fromMin
       ? toMin - fromMin
       : (1440 - fromMin) + toMin; // 1440 = 24*60
-    console.log(`[TimeWindow] from=${from} (${fromMin}min) → to=${to} (${toMin}min) | duration=${duration}min | valid=${duration > 0}`);
     return duration > 0; // zero-length = invalid, everything else = valid
   }
 
@@ -90,8 +89,6 @@ export default function QuoteForm({ mode = "full" }: QuoteFormProps) {
     const laadTot = form.elements.namedItem("laadvensterTot") as HTMLInputElement | null;
     const losVanaf = form.elements.namedItem("losvensterVanaf") as HTMLInputElement | null;
     const losTot = form.elements.namedItem("losvensterTot") as HTMLInputElement | null;
-
-    console.log(`[validateVensters] pickup: ${laadVanaf?.value} → ${laadTot?.value} | dropoff: ${losVanaf?.value} → ${losTot?.value}`);
 
     const errors: { laad?: string; los?: string } = {};
 
