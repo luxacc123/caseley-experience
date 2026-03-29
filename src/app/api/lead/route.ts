@@ -4,6 +4,7 @@ import { sendLeadNotification } from "@/lib/sendLeadNotification";
 import type { LeadRecord } from "@/lib/leadTypes";
 
 /* Force dynamic rendering — no static caching for API routes */
+/* env-refresh: 2026-03-29T21 */
 export const dynamic = "force-dynamic";
 
 /* ── Simple in-memory rate limit (best effort, per-instance) ── */
