@@ -89,10 +89,8 @@ export async function POST(request: NextRequest) {
 
     const userAgent = request.headers.get("user-agent") ?? "";
 
-    /* ── Build facilities string from array ── */
-    const facilitiesValue = Array.isArray(body.facilities)
-      ? body.facilities.join(", ")
-      : body.facilities || null;
+    /* ── Map facility checkboxes to booleans ── */
+    const facilityList = Array.isArray(body.facilities) ? body.facilities : [];
 
     /* ── Insert into Supabase ── */
     const supabase = getSupabaseAdmin();
@@ -115,7 +113,11 @@ export async function POST(request: NextRequest) {
         width_cm: typeof body.width_cm === "number" ? body.width_cm : null,
         height_cm: typeof body.height_cm === "number" ? body.height_cm : null,
         weight_kg: body.weight_kg,
-        facilities: facilitiesValue,
+        needs_tail_lift: facilityList.includes("needs_tail_lift"),
+        needs_moffett: facilityList.includes("needs_moffett"),
+        has_forklift: facilityList.includes("has_forklift"),
+        has_dock: facilityList.includes("has_dock"),
+        no_equipment_available: facilityList.includes("no_equipment_available"),
         facility_notes: body.facility_notes?.trim() || null,
         service_type: body.service_type?.trim() || null,
         notes: body.notes?.trim() || null,
