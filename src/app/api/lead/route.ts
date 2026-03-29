@@ -3,6 +3,7 @@ import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
 import { sendLeadNotification } from "@/lib/sendLeadNotification";
 import type { LeadRecord } from "@/lib/leadTypes";
 
+/* Force dynamic rendering — no static caching for API routes */
 export const dynamic = "force-dynamic";
 
 /* ── Simple in-memory rate limit (best effort, per-instance) ── */
